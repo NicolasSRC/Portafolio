@@ -3,7 +3,7 @@
 Landing / portfolio interactivo construido con **Astro + Tailwind CSS**. Estático,
 rápido, sin backend ni costos mensuales. Listo para desplegar gratis.
 
-## 🚀 Comandos
+## Comandos
 
 ```bash
 npm install      # instalar dependencias (una sola vez)
@@ -12,7 +12,7 @@ npm run build    # genera el sitio estático en /dist
 npm run preview  # previsualiza el build de producción
 ```
 
-## ✏️ Cómo editar el contenido
+## Cómo editar el contenido
 
 **Todo el contenido vive en un solo archivo:** `src/data/cv.ts`.
 No necesitás tocar los componentes. Ahí editás:
@@ -44,22 +44,6 @@ Para personalizar el formato del PDF, editá `src/pages/cv.astro`.
 6. **Proyectos** — showcase editable.
 7. **Terminal** — consola interactiva (`help`, `whoami`, `skills`, etc.).
 8. **Contacto** — CTA + datos.
-
-## ☁️ Desplegar (gratis)
-
-### Opción A — Vercel (recomendado)
-1. Subí el repo a GitHub.
-2. Importá el repo en [vercel.com](https://vercel.com). Detecta Astro solo.
-3. Deploy. Listo.
-
-### Opción B — Netlify
-Igual que Vercel: conectás el repo y publica automáticamente.
-
-### Opción C — GitHub Pages
-```bash
-npm run build   # genera /dist
-```
-Publicá la carpeta `/dist`. (Para Pages, configurá `site` y `base` en `astro.config.mjs`).
 
 ## 🎨 Tema
 Los colores del tema dark se definen en `src/styles/global.css` (bloque `@theme`).
