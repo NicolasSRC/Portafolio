@@ -1,0 +1,56 @@
+---
+import Section from './Section.astro';
+import { skillGroups } from '../data/cv';
+
+const categories = ['Todas', ...skillGroups.map((g) => g.category)];
+---
+
+<Section id="skills" eyebrow="// 04. Stack técnico" title="Skills relevantes">
+  <!-- Filtros -->
+  <div class="reveal mb-8 flex flex-wrap gap-2">
+    {
+      categories.map((c, i) => (
+        <button
+          class="skill-filter rounded-lg border border-[var(--color-border)] px-3.5 py-1.5 font-mono text-xs transition-colors hover:border-[var(--color-accent)] data-[active=true]:border-[var(--color-accent)] data-[active=true]:bg-[var(--color-accent)]/10 data-[active=true]:text-[var(--color-accent)]"
+          data-cat={c}
+          data-active={i === 0 ? 'true' : 'false'}
+        >
+          {c}
+        </button>
+      ))
+    }
+  </div>
+
+  <!-- Grid de skills -->
+  <div class="reveal grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      skillGroups.map((g) => (
+        <div class="skill-card card p-5" data-cat={g.category}>
+          <h3 class="mb-3 font-mono text-sm text-[var(--color-accent)]">{g.category}</h3>
+          <div class="flex flex-wrap gap-2">
+            {g.items.map((item) => (
+              <span class="chip">{item}</span>
+            ))}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</Section>
+
+<script>
+  const filters = document.querySelectorAll<HTMLButtonElement>('.skill-filter');
+  const cards = document.querySelectorAll<HTMLElement>('.skill-card');
+
+  filters.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      filters.forEach((b) => b.setAttribute('data-active', 'false'));
+      btn.setAttribute('data-active', 'true');
+      const cat = btn.dataset.cat;
+      cards.forEach((card) => {
+        const show = cat === 'Todas' || card.dataset.cat === cat;
+        card.style.display = show ? '' : 'none';
+      });
+    });
+  });
+</script>

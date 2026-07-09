@@ -1,0 +1,197 @@
+---
+import Section from './Section.astro';
+import { profile, experience, skillGroups, projects } from '../data/cv';
+
+// Datos que el script del cliente usará para responder los comandos.
+const data = {
+  whoami: `${profile.name} — ${profile.role} · ${profile.location}`,
+  contact: {
+    email: profile.email,
+    phone: profile.phone,
+    github: profile.github,
+    linkedin: profile.linkedin,
+  },
+  skills: skillGroups.map((g) => ({ category: g.category, items: g.items })),
+  experience: experience.map((e) => ({ role: e.role, company: e.company, period: e.period })),
+  projects: projects.map((p) => ({ name: p.name, stack: p.stack })),
+  cvPdf: profile.cvPdf,
+};
+---
+
+<Section id="terminal" eyebrow="// 06. Modo nerd" title="Explorá por terminal">
+  <p class="reveal -mt-6 mb-8 max-w-2xl text-[var(--color-muted)]">
+    ¿Preferís la consola? Escribí <code class="font-mono text-[var(--color-accent)]">help</code> y descubrí
+    los comandos disponibles.
+  </p>
+
+  <div class="reveal card overflow-hidden">
+    <!-- Barra de la terminal -->
+    <div class="flex items-center gap-2 border-b border-[var(--color-border)] bg-[var(--color-bg-soft)] px-4 py-2.5">
+      <span class="h-3 w-3 rounded-full bg-[#ff5f56]"></span>
+      <span class="h-3 w-3 rounded-full bg-[#ffbd2e]"></span>
+      <span class="h-3 w-3 rounded-full bg-[#27c93f]"></span>
+      <span class="ml-2 font-mono text-xs text-[var(--color-muted)]">
+        nicolas@portfolio: ~
+      </span>
+    </div>
+
+    <!-- Salida -->
+    <div
+      id="term-body"
+      class="h-80 overflow-y-auto p-4 font-mono text-sm leading-relaxed"
+      data-cv={JSON.stringify(data)}
+    >
+      <div id="term-output"></div>
+      <div class="flex items-center gap-2">
+        <span class="text-[var(--color-accent)]">➜</span>
+        <span class="text-[var(--color-accent-2)]">~</span>
+        <input
+          id="term-input"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="Entrada de terminal"
+          class="flex-1 border-0 bg-transparent text-[var(--color-text)] outline-none"
+          placeholder="escribí 'help' y Enter…"
+        />
+      </div>
+    </div>
+  </div>
+</Section>
+
+<script>
+  const body = document.getElementById('term-body')!;
+  const output = document.getElementById('term-output')!;
+  const input = document.getElementById('term-input') as HTMLInputElement;
+  const cv = JSON.parse(body.dataset.cv || '{}');
+
+  const A = 'color:var(--color-accent)';
+  const M = 'color:var(--color-muted)';
+  const T = 'color:var(--color-text)';
+
+  const esc = (s: string) =>
+    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  const commands: Record<string, () => string> = {
+    help: () =>
+      [
+        `<span style="${M}">Comandos disponibles:</span>`,
+        `  <span style="${A}">whoami</span>      Quién soy`,
+        `  <span style="${A}">skills</span>      Stack técnico`,
+        `  <span style="${A}">experience</span>  Experiencia laboral`,
+        `  <span style="${A}">projects</span>    Proyectos destacados`,
+        `  <span style="${A}">contact</span>     Datos de contacto`,
+        `  <span style="${A}">cv</span>          Descargar el CV en PDF`,
+        `  <span style="${A}">social</span>      GitHub / LinkedIn`,
+        `  <span style="${A}">clear</span>       Limpiar la pantalla`,
+      ].join('\n'),
+    whoami: () => `<span style="${T}">${esc(cv.whoami)}</span>`,
+    skills: () =>
+      cv.skills
+        .map(
+          (g: any) =>
+            `<span style="${A}">${esc(g.category)}:</span> <span style="${T}">${esc(
+              g.items.join(', ')
+            )}</span>`
+        )
+        .join('\n'),
+    experience: () =>
+      cv.experience
+        .map(
+          (e: any) =>
+            `<span style="${T}">${esc(e.role)}</span> <span style="${M}">@ ${esc(
+              e.company
+            )}</span>\n  <span style="${M}">${esc(e.period)}</span>`
+        )
+        .join('\n\n'),
+    projects: () =>
+      cv.projects
+        .map(
+          (p: any, i: number) =>
+            `<span style="${A}">${i + 1}.</span> <span style="${T}">${esc(
+              p.name
+            )}</span>\n   <span style="${M}">${esc(p.stack.join(' · '))}</span>`
+        )
+        .join('\n'),
+    contact: () =>
+      [
+        `<span style="${A}">email:</span>    <a href="mailto:${cv.contact.email}" style="${T}">${esc(cv.contact.email)}</a>`,
+        `<span style="${A}">teléfono:</span> <span style="${T}">${esc(cv.contact.phone)}</span>`,
+        `<span style="${A}">github:</span>   <a href="${cv.contact.github}" target="_blank" style="${T}">${esc(cv.contact.github)}</a>`,
+        `<span style="${A}">linkedin:</span> <a href="${cv.contact.linkedin}" target="_blank" style="${T}">${esc(cv.contact.linkedin)}</a>`,
+      ].join('\n'),
+    social: () =>
+      [
+        `<span style="${A}">GitHub:</span>   <a href="${cv.contact.github}" target="_blank" style="${T}">${esc(cv.contact.github)}</a>`,
+        `<span style="${A}">LinkedIn:</span> <a href="${cv.contact.linkedin}" target="_blank" style="${T}">${esc(cv.contact.linkedin)}</a>`,
+      ].join('\n'),
+    cv: () => {
+      window.open(cv.cvPdf, '_blank');
+      return `<span style="${M}">Abriendo CV en PDF… ↓</span>`;
+    },
+    clear: () => {
+      output.innerHTML = '';
+      return '';
+    },
+  };
+
+  function print(html: string) {
+    if (html === '') return;
+    const line = document.createElement('div');
+    line.className = 'whitespace-pre-wrap mb-3';
+    line.innerHTML = html;
+    output.appendChild(line);
+  }
+
+  function run(raw: string) {
+    const cmd = raw.trim().toLowerCase();
+    // Eco del prompt
+    const echo = document.createElement('div');
+    echo.className = 'mb-1';
+    echo.innerHTML = `<span style="${A}">➜</span> <span style="${'color:var(--color-accent-2)'}">~</span> <span style="${T}">${esc(raw)}</span>`;
+    output.appendChild(echo);
+
+    if (cmd === '') return;
+    if (commands[cmd]) {
+      print(commands[cmd]());
+    } else {
+      print(
+        `<span style="color:#ff6b6b">comando no encontrado: ${esc(cmd)}</span>\n<span style="${M}">escribí <span style="${A}">help</span> para ver las opciones</span>`
+      );
+    }
+  }
+
+  // Mensaje de bienvenida
+  print(
+    `<span style="${M}">Bienvenido a la terminal de <span style="${T}">${esc(cv.whoami.split(' — ')[0])}</span>.\nEscribí <span style="${A}">help</span> para empezar.</span>`
+  );
+
+  const history: string[] = [];
+  let hIndex = -1;
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const val = input.value;
+      if (val.trim()) {
+        history.push(val);
+        hIndex = history.length;
+      }
+      run(val);
+      input.value = '';
+      body.scrollTop = body.scrollHeight;
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (hIndex > 0) input.value = history[--hIndex];
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (hIndex < history.length - 1) input.value = history[++hIndex];
+      else {
+        hIndex = history.length;
+        input.value = '';
+      }
+    }
+  });
+
+  // Foco al hacer click en cualquier parte de la terminal
+  body.addEventListener('click', () => input.focus());
+</script>

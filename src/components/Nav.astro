@@ -1,0 +1,94 @@
+---
+import { profile } from '../data/cv';
+
+const links = [
+  { href: '#sobre-mi', label: 'Sobre mí' },
+  { href: '#experiencia', label: 'Experiencia' },
+  { href: '#arquitectura', label: 'Arquitectura' },
+  { href: '#skills', label: 'Skills' },
+  { href: '#proyectos', label: 'Proyectos' },
+  { href: '#terminal', label: 'Terminal' },
+  { href: '#contacto', label: 'Contacto' },
+];
+---
+
+<header
+  class="fixed top-0 inset-x-0 z-50 border-b border-[var(--color-border)]/60 bg-[var(--color-bg)]/70 backdrop-blur-md"
+>
+  <nav class="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
+    <a href="#top" class="font-mono text-sm font-bold tracking-tight">
+      <span class="text-[var(--color-accent)]">&lt;</span>NR<span
+        class="text-[var(--color-accent)]">/&gt;</span
+      >
+    </a>
+
+    <ul class="hidden items-center gap-6 md:flex">
+      {
+        links.map((l) => (
+          <li>
+            <a
+              href={l.href}
+              class="text-sm text-[var(--color-muted)] transition-colors hover:text-[var(--color-accent)]"
+            >
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <a
+      href={profile.cvPdf}
+      target="_blank"
+      class="hidden rounded-lg border border-[var(--color-accent)]/40 bg-[var(--color-accent)]/10 px-3 py-1.5 font-mono text-xs text-[var(--color-accent)] transition-colors hover:bg-[var(--color-accent)]/20 sm:inline-block"
+    >
+      ↓ CV.pdf
+    </a>
+
+    <!-- Botón menú móvil -->
+    <button
+      id="menu-btn"
+      aria-label="Abrir menú"
+      class="text-[var(--color-text)] md:hidden"
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Menú móvil desplegable -->
+  <ul
+    id="mobile-menu"
+    class="hidden flex-col gap-1 border-t border-[var(--color-border)] px-5 py-3 md:!hidden"
+  >
+    {
+      links.map((l) => (
+        <li>
+          <a
+            href={l.href}
+            class="mobile-link block py-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-accent)]"
+          >
+            {l.label}
+          </a>
+        </li>
+      ))
+    }
+    <li>
+      <a href={profile.cvPdf} target="_blank" class="block py-1.5 font-mono text-sm text-[var(--color-accent)]">
+        ↓ Descargar CV.pdf
+      </a>
+    </li>
+  </ul>
+</header>
+
+<script>
+  const btn = document.getElementById('menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  btn?.addEventListener('click', () => menu?.classList.toggle('hidden'));
+  document.querySelectorAll('.mobile-link').forEach((a) =>
+    a.addEventListener('click', () => menu?.classList.add('hidden'))
+  );
+</script>

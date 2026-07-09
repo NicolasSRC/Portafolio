@@ -1,0 +1,120 @@
+@import 'tailwindcss';
+
+/* ── Tema (Dark / Tech moderno) ─────────────────────────────────────────── */
+@theme {
+  --color-bg: #0a0e14;
+  --color-bg-soft: #0f1620;
+  --color-surface: #131c28;
+  --color-border: #1e2c3c;
+  --color-text: #d7e0ea;
+  --color-muted: #8a9bb0;
+  --color-accent: #38e1c2;     /* teal neón */
+  --color-accent-2: #6c8cff;   /* azul/violeta */
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Fondo con grilla sutil + glow */
+.bg-grid {
+  background-image:
+    radial-gradient(60rem 40rem at 70% -10%, color-mix(in srgb, var(--color-accent-2) 12%, transparent), transparent),
+    radial-gradient(50rem 30rem at 10% 10%, color-mix(in srgb, var(--color-accent) 8%, transparent), transparent),
+    linear-gradient(to right, color-mix(in srgb, var(--color-border) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--color-border) 55%, transparent) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 3rem 3rem, 3rem 3rem;
+}
+
+/* Texto con gradiente */
+.text-gradient {
+  background: linear-gradient(120deg, var(--color-accent), var(--color-accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Tarjetas con borde tech */
+.card {
+  background: color-mix(in srgb, var(--color-surface) 80%, transparent);
+  border: 1px solid var(--color-border);
+  border-radius: 0.9rem;
+  backdrop-filter: blur(6px);
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+.card:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 55%, var(--color-border));
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px -16px color-mix(in srgb, var(--color-accent) 40%, transparent);
+}
+
+/* Chips de tecnología */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  padding: 0.18rem 0.55rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+  color: var(--color-muted);
+  background: color-mix(in srgb, var(--color-accent) 6%, transparent);
+}
+
+/* Reveal on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-accent-2); }
+
+/* Cursor parpadeante (terminal) */
+@keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.cursor-blink { animation: blink 1s step-end infinite; }
+
+/* Pulso del nodo "actual" en el timeline */
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 60%, transparent); }
+  70% { box-shadow: 0 0 0 10px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.pulse { animation: pulse-ring 2s infinite; }

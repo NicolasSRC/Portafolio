@@ -1,0 +1,98 @@
+---
+import Section from './Section.astro';
+import { projects, studio } from '../data/cv';
+---
+
+<Section id="proyectos" eyebrow="// 05. Trabajo destacado" title="Proyectos">
+  <!-- Destacado: CodeNova Studio -->
+  <div class="reveal card mb-8 overflow-hidden border-[var(--color-accent)]/30 p-6 sm:p-8">
+    <div class="grid gap-6 md:grid-cols-[1.6fr_1fr] md:items-center">
+      <div>
+        <span class="mb-3 inline-flex items-center gap-1.5 rounded-full bg-[var(--color-accent)]/15 px-3 py-1 font-mono text-[0.7rem] text-[var(--color-accent)]">
+          ★ Emprendimiento propio
+        </span>
+        <h3 class="text-2xl font-extrabold">
+          <span class="text-gradient">{studio.name}</span>
+        </h3>
+        <p class="mt-1 font-mono text-sm text-[var(--color-accent-2)]">{studio.tagline}</p>
+        <p class="mt-4 leading-relaxed text-[var(--color-muted)]">{studio.description}</p>
+
+        <div class="mt-5 flex flex-wrap gap-1.5">
+          {studio.stack.map((s) => <span class="chip">{s}</span>)}
+        </div>
+
+        <a
+          href={studio.url}
+          target="_blank"
+          rel="noopener"
+          class="mt-6 inline-flex items-center gap-2 rounded-lg bg-[var(--color-accent)] px-5 py-2.5 font-semibold text-[var(--color-bg)] transition-transform hover:scale-105"
+        >
+          Visitar codenova.studio
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg>
+        </a>
+      </div>
+
+      <!-- Métricas del estudio -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-soft)] p-4 text-center">
+          <div class="text-gradient text-3xl font-extrabold">100+</div>
+          <div class="mt-1 text-xs text-[var(--color-muted)]">Sitios construidos</div>
+        </div>
+        <div class="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-soft)] p-4 text-center">
+          <div class="text-gradient text-3xl font-extrabold">IA</div>
+          <div class="mt-1 text-xs text-[var(--color-muted)]">Asistente integrado</div>
+        </div>
+        <div class="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-soft)] p-4 text-center">
+          <div class="text-gradient text-3xl font-extrabold">100%</div>
+          <div class="mt-1 text-xs text-[var(--color-muted)]">Responsive</div>
+        </div>
+        <div class="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-soft)] p-4 text-center">
+          <div class="text-gradient text-3xl font-extrabold">Next</div>
+          <div class="mt-1 text-xs text-[var(--color-muted)]">.js + Vercel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="reveal mb-6 font-mono text-sm text-[var(--color-muted)]">
+    <span class="text-[var(--color-accent)]">//</span> Algunos sitios en vivo
+  </p>
+
+  <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      projects.map((p) => (
+        <article class="reveal card flex flex-col p-6">
+          <div class="mb-3 flex items-start justify-between gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </div>
+            {p.highlight && (
+              <span class="rounded-full border border-[var(--color-border)] px-2.5 py-0.5 font-mono text-[0.65rem] text-[var(--color-muted)]">
+                {p.highlight}
+              </span>
+            )}
+          </div>
+
+          <h3 class="text-lg font-bold">{p.name}</h3>
+          <p class="mt-2 flex-1 text-sm leading-relaxed text-[var(--color-muted)]">{p.description}</p>
+
+          <div class="mt-4 flex flex-wrap gap-1.5">
+            {p.stack.map((s) => (
+              <span class="chip">{s}</span>
+            ))}
+          </div>
+
+          {p.demo && (
+            <div class="mt-5 border-t border-[var(--color-border)] pt-4">
+              <a href={p.demo} target="_blank" rel="noopener"
+                class="flex items-center gap-1.5 font-mono text-xs text-[var(--color-muted)] transition-colors hover:text-[var(--color-accent)]">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg>
+                Ver sitio en vivo
+              </a>
+            </div>
+          )}
+        </article>
+      ))
+    }
+  </div>
+</Section>

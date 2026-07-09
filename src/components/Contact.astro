@@ -1,0 +1,65 @@
+---
+import { profile } from '../data/cv';
+
+const items = [
+  { label: 'Email', value: profile.email, href: `mailto:${profile.email}` },
+  { label: 'Teléfono', value: profile.phone, href: `tel:${profile.phone.replace(/\s/g, '')}` },
+  { label: 'GitHub', value: profile.github.replace(/^https?:\/\//, ''), href: profile.github },
+  { label: 'LinkedIn', value: profile.linkedin.replace(/^https?:\/\//, ''), href: profile.linkedin },
+];
+---
+
+<section id="contacto" class="px-5 py-24">
+  <div class="mx-auto max-w-3xl text-center">
+    <p class="reveal font-mono text-sm text-[var(--color-accent)]">// 07. Hablemos</p>
+    <h2 class="reveal mt-2 text-3xl font-bold sm:text-4xl">¿Construimos algo juntos?</h2>
+    <p class="reveal mx-auto mt-4 max-w-xl text-[var(--color-muted)]">
+      Estoy abierto a nuevas oportunidades y proyectos. Si buscás un ingeniero de software
+      con foco en arquitectura y escalabilidad, escribime.
+    </p>
+
+    <div class="reveal mt-8 flex flex-wrap justify-center gap-3">
+      <a
+        href={`mailto:${profile.email}`}
+        class="rounded-lg bg-[var(--color-accent)] px-6 py-3 font-semibold text-[var(--color-bg)] transition-transform hover:scale-105"
+      >
+        Enviar un email
+      </a>
+      <a
+        href={profile.cvPdf}
+        target="_blank"
+        class="rounded-lg border border-[var(--color-border)] px-6 py-3 font-mono text-sm transition-colors hover:border-[var(--color-accent)]"
+      >
+        ↓ Descargar CV (PDF)
+      </a>
+    </div>
+
+    <div class="reveal mx-auto mt-12 grid max-w-xl gap-3 sm:grid-cols-2">
+      {
+        items.map((it) => (
+          <a
+            href={it.href}
+            target={it.href.startsWith('http') ? '_blank' : undefined}
+            rel="noopener"
+            class="card flex items-center justify-between gap-3 p-4 text-left"
+          >
+            <div>
+              <p class="font-mono text-xs text-[var(--color-accent)]">{it.label}</p>
+              <p class="truncate text-sm text-[var(--color-text)]">{it.value}</p>
+            </div>
+            <svg class="shrink-0 text-[var(--color-muted)]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<footer class="border-t border-[var(--color-border)] px-5 py-8">
+  <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
+    <p class="font-mono text-xs text-[var(--color-muted)]">
+      © 2026 {profile.name}. Hecho con <span class="text-[var(--color-accent)]">Astro</span> + Tailwind.
+    </p>
+    <p class="font-mono text-xs text-[var(--color-muted)]">{profile.location}</p>
+  </div>
+</footer>

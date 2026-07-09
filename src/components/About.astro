@@ -1,0 +1,63 @@
+---
+import Section from './Section.astro';
+import { profile, education, certifications } from '../data/cv';
+
+const stats = [
+  { value: '5+', label: 'Años de experiencia' },
+  { value: '4', label: 'Roles de ingeniería' },
+  { value: '∞', label: 'Ganas de aprender' },
+];
+---
+
+<Section id="sobre-mi" eyebrow="// 01. Sobre mí" title="Perfil profesional">
+  <div class="grid gap-10 md:grid-cols-[1.5fr_1fr]">
+    <div class="reveal">
+      <p class="text-lg leading-relaxed text-[var(--color-muted)]">
+        {profile.summary}
+      </p>
+
+      <div class="mt-8 grid grid-cols-3 gap-4">
+        {
+          stats.map((s) => (
+            <div class="card p-4 text-center">
+              <div class="text-gradient text-3xl font-extrabold">{s.value}</div>
+              <div class="mt-1 text-xs text-[var(--color-muted)]">{s.label}</div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="reveal space-y-6">
+      <div>
+        <h3 class="mb-3 font-mono text-sm text-[var(--color-accent)]">Educación</h3>
+        <div class="space-y-3">
+          {
+            education.map((e) => (
+              <div class="card p-4">
+                <p class="font-semibold">{e.title}</p>
+                <p class="text-sm text-[var(--color-muted)]">{e.place}</p>
+                <p class="mt-1 font-mono text-xs text-[var(--color-accent)]">{e.detail}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <div>
+        <h3 class="mb-3 font-mono text-sm text-[var(--color-accent)]">Cursos y certificados</h3>
+        <div class="space-y-3">
+          {
+            certifications.map((c) => (
+              <div class="card p-4">
+                <p class="font-semibold">{c.title}</p>
+                <p class="text-sm text-[var(--color-muted)]">{c.place}</p>
+                <p class="mt-1 font-mono text-xs text-[var(--color-accent)]">{c.detail}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</Section>

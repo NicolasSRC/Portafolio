@@ -1,0 +1,181 @@
+---
+import Section from './Section.astro';
+
+/**
+ * Diagrama interactivo de una arquitectura de microservicios típica de las que
+ * trabaja Nicolás. Cada nodo es clickeable y muestra una explicación.
+ */
+type Node = {
+  id: string;
+  label: string;
+  sub: string;
+  layer: 'client' | 'gateway' | 'service' | 'data' | 'infra';
+  detail: string;
+  tech: string[];
+};
+
+const nodes: Node[] = [
+  { id: 'web', label: 'Web App', sub: 'React / Vue', layer: 'client',
+    detail: 'Interfaces dinámicas y responsivas construidas con React, Vue.js, Livewire y Tailwind CSS. Consumen las APIs vía HTTPS.',
+    tech: ['React', 'Vue.js', 'Tailwind'] },
+  { id: 'mobile', label: 'Mobile App', sub: 'React Native', layer: 'client',
+    detail: 'Aplicaciones móviles (p. ej. con escáner de documentos) que se integran a los web services con sincronización confiable.',
+    tech: ['React Native', 'REST'] },
+  { id: 'gateway', label: 'API Gateway', sub: 'Routing · Auth', layer: 'gateway',
+    detail: 'Punto único de entrada: enrutamiento, autenticación, rate-limiting y validación. Desacopla a los clientes de los servicios internos.',
+    tech: ['Laravel', 'JWT', 'Nginx'] },
+  { id: 'svc-auth', label: 'Auth Service', sub: 'Identidad', layer: 'service',
+    detail: 'Servicio de autenticación y autorización. Diseñado con principios SOLID y patrones de diseño para mantener responsabilidades claras.',
+    tech: ['SOLID', 'JWT'] },
+  { id: 'svc-docs', label: 'Documents Service', sub: 'SGDEA', layer: 'service',
+    detail: 'Gestión documental electrónica (SGDEA): carga, indexación y consulta de documentos, con optimización de rendimiento mediante caché.',
+    tech: ['Laravel', 'Caché'] },
+  { id: 'svc-biz', label: 'Business Service', sub: 'Procesos', layer: 'service',
+    detail: 'Lógica de negocio y automatización de procesos empresariales. Comunicación eficiente y segura entre servicios.',
+    tech: ['Microservicios', 'Queues'] },
+  { id: 'pg', label: 'PostgreSQL', sub: 'Relacional', layer: 'data',
+    detail: 'Bases de datos relacionales escalables y confiables. Modelado, índices y optimización de consultas para alto rendimiento.',
+    tech: ['PostgreSQL', 'MySQL'] },
+  { id: 'redis', label: 'Redis', sub: 'Caché', layer: 'data',
+    detail: 'Capa de caché en memoria para acelerar respuestas, reducir carga en la base de datos y gestionar colas/sesiones.',
+    tech: ['Redis'] },
+  { id: 'nosql', label: 'NoSQL', sub: 'Documental', layer: 'data',
+    detail: 'Almacenamiento NoSQL para datos no estructurados y casos donde el esquema flexible mejora el rendimiento.',
+    tech: ['NoSQL'] },
+  { id: 'cicd', label: 'CI/CD + Docker', sub: 'Entrega continua', layer: 'infra',
+    detail: 'Contenedores Docker y pipelines de CI/CD (con Ansible/Linux) para builds reproducibles y despliegues automatizados a producción.',
+    tech: ['Docker', 'CI/CD', 'Ansible', 'Linux'] },
+];
+
+const layerLabel: Record<Node['layer'], string> = {
+  client: 'Clientes',
+  gateway: 'Gateway',
+  service: 'Microservicios',
+  data: 'Datos',
+  infra: 'Infraestructura',
+};
+
+const byLayer = (l: Node['layer']) => nodes.filter((n) => n.layer === l);
+const layers: Node['layer'][] = ['client', 'gateway', 'service', 'data'];
+const infra = byLayer('infra');
+---
+
+<Section id="arquitectura" eyebrow="// 03. Cómo pienso los sistemas" title="Arquitectura interactiva">
+  <p class="reveal -mt-6 mb-8 max-w-2xl text-[var(--color-muted)]">
+    Un esquema de las arquitecturas de <span class="text-[var(--color-text)]">microservicios</span> que
+    diseño y mantengo. <span class="font-mono text-sm text-[var(--color-accent)]">Hacé clic en cada bloque</span>
+    para ver el detalle.
+  </p>
+
+  <div class="reveal grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+    <!-- Diagrama -->
+    <div class="card p-5 sm:p-7">
+      <div class="space-y-5">
+        {
+          layers.map((layer) => (
+            <div>
+              <p class="mb-2 font-mono text-[0.7rem] uppercase tracking-wider text-[var(--color-muted)]">
+                {layerLabel[layer]}
+              </p>
+              <div class="flex flex-wrap gap-3">
+                {byLayer(layer).map((n) => (
+                  <button
+                    class="arch-node group relative flex-1 basis-40 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-soft)] p-3 text-left transition-all hover:border-[var(--color-accent)] data-[active=true]:border-[var(--color-accent)] data-[active=true]:bg-[var(--color-accent)]/10"
+                    data-id={n.id}
+                    data-label={n.label}
+                    data-detail={n.detail}
+                    data-tech={n.tech.join(',')}
+                  >
+                    <span class="block text-sm font-semibold">{n.label}</span>
+                    <span class="block font-mono text-[0.7rem] text-[var(--color-muted)]">{n.sub}</span>
+                  </button>
+                ))}
+              </div>
+              {layer !== 'data' && (
+                <div class="my-1.5 flex justify-center text-[var(--color-border)]">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                </div>
+              )}
+            </div>
+          ))
+        }
+
+        <!-- Infra envolvente -->
+        <div class="mt-2 rounded-lg border border-dashed border-[var(--color-border)] p-3">
+          <div class="flex flex-wrap items-center gap-3">
+            {
+              infra.map((n) => (
+                <button
+                  class="arch-node flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-bg-soft)] px-3 py-2 text-left transition-all hover:border-[var(--color-accent)] data-[active=true]:border-[var(--color-accent)] data-[active=true]:bg-[var(--color-accent)]/10"
+                  data-id={n.id}
+                  data-label={n.label}
+                  data-detail={n.detail}
+                  data-tech={n.tech.join(',')}
+                >
+                  <span class="text-sm font-semibold">{n.label}</span>
+                  <span class="font-mono text-[0.7rem] text-[var(--color-muted)]">{n.sub}</span>
+                </button>
+              ))
+            }
+            <span class="font-mono text-[0.7rem] text-[var(--color-muted)]">envuelve todo el ciclo →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel de detalle -->
+    <aside
+      id="arch-detail"
+      class="card sticky top-24 h-fit p-6"
+      data-empty="true"
+    >
+      <div id="arch-detail-empty" class="text-center">
+        <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-accent)]/10 font-mono text-xl text-[var(--color-accent)]">
+          { }
+        </div>
+        <p class="text-sm text-[var(--color-muted)]">
+          Seleccioná un componente del diagrama para ver cómo lo aplico.
+        </p>
+      </div>
+      <div id="arch-detail-content" class="hidden">
+        <h3 id="arch-title" class="text-xl font-bold text-[var(--color-accent)]"></h3>
+        <p id="arch-text" class="mt-3 text-sm leading-relaxed text-[var(--color-muted)]"></p>
+        <div id="arch-tech" class="mt-4 flex flex-wrap gap-1.5"></div>
+      </div>
+    </aside>
+  </div>
+</Section>
+
+<script>
+  const nodes = document.querySelectorAll<HTMLButtonElement>('.arch-node');
+  const panel = document.getElementById('arch-detail')!;
+  const empty = document.getElementById('arch-detail-empty')!;
+  const content = document.getElementById('arch-detail-content')!;
+  const titleEl = document.getElementById('arch-title')!;
+  const textEl = document.getElementById('arch-text')!;
+  const techEl = document.getElementById('arch-tech')!;
+
+  nodes.forEach((node) => {
+    node.addEventListener('click', () => {
+      nodes.forEach((n) => n.setAttribute('data-active', 'false'));
+      node.setAttribute('data-active', 'true');
+
+      titleEl.textContent = node.dataset.label ?? '';
+      textEl.textContent = node.dataset.detail ?? '';
+      techEl.innerHTML = '';
+      (node.dataset.tech ?? '')
+        .split(',')
+        .filter(Boolean)
+        .forEach((t) => {
+          const chip = document.createElement('span');
+          chip.className = 'chip';
+          chip.textContent = t;
+          techEl.appendChild(chip);
+        });
+
+      empty.classList.add('hidden');
+      content.classList.remove('hidden');
+      panel.setAttribute('data-empty', 'false');
+    });
+  });
+</script>

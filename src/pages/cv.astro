@@ -1,0 +1,332 @@
+---
+/**
+ * Página de CV optimizada para impresión / "Guardar como PDF".
+ * Se genera a partir de los mismos datos que la landing (src/data/cv.ts),
+ * así el PDF siempre queda sincronizado con la web.
+ */
+import { profile, experience, skillGroups, education, certifications, studio } from '../data/cv';
+
+// Máximo de logros por puesto en el PDF (la web muestra todos).
+// Subí/bajá este número para ajustar la cantidad de páginas del PDF.
+const MAX_BULLETS = 3;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{`CV — ${profile.name}`}</title>
+    <meta name="robots" content="noindex" />
+  </head>
+  <body>
+    <!-- Barra de acción (no se imprime) -->
+    <div class="toolbar no-print">
+      <a href="/" class="btn ghost">← Volver a la web</a>
+      <button id="print-btn" class="btn">↓ Descargar / Imprimir PDF</button>
+    </div>
+
+    <main class="sheet">
+      <!-- Encabezado -->
+      <header class="head">
+        <div>
+          <h1>{profile.name}</h1>
+          <p class="role">{profile.role}</p>
+          <p class="tagline">{profile.tagline}</p>
+        </div>
+        <ul class="contact">
+          <li>{profile.email}</li>
+          <li>{profile.phone}</li>
+          <li>{profile.location}</li>
+          <li><a href={profile.github}>{profile.github.replace(/^https?:\/\//, '')}</a></li>
+          <li><a href={profile.linkedin}>{profile.linkedin.replace(/^https?:\/\//, '')}</a></li>
+        </ul>
+      </header>
+
+      <!-- Perfil -->
+      <section>
+        <h2>Perfil</h2>
+        <p class="summary">{profile.summary}</p>
+      </section>
+
+      <!-- Experiencia -->
+      <section>
+        <h2>Experiencia profesional</h2>
+        {
+          experience.map((job) => (
+            <div class="entry">
+              <div class="entry-head">
+                <span class="entry-role">{job.role}</span>
+                <span class="entry-period">{job.period}</span>
+              </div>
+              <p class="entry-company">{job.company}</p>
+              <ul class="bullets">
+                {job.highlights.slice(0, MAX_BULLETS).map((h) => (
+                  <li>{h}</li>
+                ))}
+              </ul>
+              <p class="tags">{job.tags.join(' · ')}</p>
+            </div>
+          ))
+        }
+      </section>
+
+      <!-- Proyecto destacado -->
+      <section>
+        <h2>Proyecto destacado</h2>
+        <div class="entry">
+          <div class="entry-head">
+            <span class="entry-role">{studio.name} — {studio.tagline}</span>
+            <span class="entry-period"><a href={studio.url}>{studio.url.replace(/^https?:\/\//, '')}</a></span>
+          </div>
+          <ul class="bullets">
+            <li>{studio.description}</li>
+          </ul>
+          <p class="tags">{studio.stack.join(' · ')}</p>
+        </div>
+      </section>
+
+      <!-- Skills -->
+      <section>
+        <h2>Skills relevantes</h2>
+        <div class="skills">
+          {
+            skillGroups.map((g) => (
+              <p class="skill-row">
+                <strong>{g.category}:</strong> {g.items.join(', ')}
+              </p>
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- Educación y certificaciones -->
+      <div class="two-col">
+        <section>
+          <h2>Educación</h2>
+          {
+            education.map((e) => (
+              <div class="mini">
+                <p class="mini-title">{e.title}</p>
+                <p class="mini-sub">{e.place}</p>
+                <p class="mini-detail">{e.detail}</p>
+              </div>
+            ))
+          }
+        </section>
+        <section>
+          <h2>Cursos y certificados</h2>
+          {
+            certifications.map((c) => (
+              <div class="mini">
+                <p class="mini-title">{c.title}</p>
+                <p class="mini-sub">{c.place}</p>
+                <p class="mini-detail">{c.detail}</p>
+              </div>
+            ))
+          }
+        </section>
+      </div>
+    </main>
+
+    <script>
+      const btn = document.getElementById('print-btn');
+      btn?.addEventListener('click', () => window.print());
+      // Si se entra con ?print, abrir el diálogo automáticamente.
+      if (new URLSearchParams(location.search).has('print')) {
+        window.addEventListener('load', () => setTimeout(() => window.print(), 400));
+      }
+    </script>
+
+    <style is:global>
+      :root {
+        --ink: #1a2230;
+        --muted: #5b6878;
+        --accent: #0e7c6b;
+        --line: #d9e0e8;
+        --paper: #ffffff;
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: #11161d;
+        color: var(--ink);
+        font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+        font-size: 13px;
+        line-height: 1.5;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      /* Toolbar */
+      .toolbar {
+        position: sticky;
+        top: 0;
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 0.9rem;
+        background: #0a0e14;
+        border-bottom: 1px solid #1e2c3c;
+        z-index: 10;
+      }
+      .btn {
+        cursor: pointer;
+        border: 0;
+        border-radius: 8px;
+        padding: 0.55rem 1.1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        background: #38e1c2;
+        color: #0a0e14;
+        text-decoration: none;
+      }
+      .btn.ghost {
+        background: transparent;
+        color: #8a9bb0;
+        border: 1px solid #1e2c3c;
+      }
+
+      /* Hoja A4 */
+      .sheet {
+        background: var(--paper);
+        width: 210mm;
+        min-height: 297mm;
+        margin: 1.5rem auto;
+        padding: 16mm 16mm 14mm;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 26px;
+        letter-spacing: -0.01em;
+      }
+      .role {
+        margin: 2px 0 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--accent);
+      }
+      .tagline {
+        margin: 2px 0 0;
+        font-size: 11.5px;
+        color: var(--muted);
+      }
+
+      .head {
+        display: flex;
+        justify-content: space-between;
+        gap: 1.5rem;
+        align-items: flex-start;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--accent);
+      }
+      .contact {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        text-align: right;
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.7;
+        min-width: 38%;
+      }
+      .contact a { color: var(--accent); text-decoration: none; }
+
+      h2 {
+        font-size: 12.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--accent);
+        margin: 18px 0 8px;
+        padding-bottom: 3px;
+        border-bottom: 1px solid var(--line);
+      }
+      .summary { margin: 0; text-align: justify; }
+
+      .entry { margin-bottom: 12px; }
+      .entry:last-child { margin-bottom: 0; }
+      .entry-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: baseline;
+      }
+      .entry-role { font-weight: 700; font-size: 13.5px; }
+      .entry-period { font-size: 11px; color: var(--muted); white-space: nowrap; }
+      .entry-period a { color: var(--accent); text-decoration: none; }
+      .entry-company { margin: 1px 0 5px; font-size: 12px; color: var(--accent); font-weight: 600; }
+      .bullets { margin: 0; padding-left: 16px; }
+      .bullets li { margin-bottom: 2px; }
+      .tags {
+        margin: 5px 0 0;
+        font-size: 10.5px;
+        color: var(--muted);
+        font-family: ui-monospace, 'Cascadia Code', monospace;
+      }
+
+      .skill-row { margin: 3px 0; }
+      .skill-row strong { color: var(--ink); }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+      .mini { margin-bottom: 8px; }
+      .mini-title { margin: 0; font-weight: 700; font-size: 12px; }
+      .mini-sub { margin: 1px 0; font-size: 11.5px; color: var(--muted); }
+      .mini-detail { margin: 0; font-size: 11px; color: var(--accent); }
+
+      /* ── Impresión ───────────────────────────────────────────────── */
+      @page {
+        size: A4;
+        /* arriba | laterales | abajo — más aire en la parte superior */
+        margin: 18mm 12mm 12mm;
+      }
+      @media print {
+        html, body { background: #fff; font-size: 10px; line-height: 1.4; }
+        .no-print { display: none !important; }
+        .sheet {
+          width: auto;
+          min-height: 0;
+          margin: 0;
+          padding: 0;
+          box-shadow: none;
+        }
+
+        /* Tipografía compacta para que entre en una página */
+        h1 { font-size: 21px; }
+        .role { font-size: 12px; }
+        .tagline { font-size: 10px; }
+        .head { padding-bottom: 8px; }
+        .contact { font-size: 9.5px; line-height: 1.5; }
+
+        h2 { font-size: 10.5px; margin: 11px 0 5px; padding-bottom: 2px; }
+        .summary { line-height: 1.35; }
+
+        .entry { margin-bottom: 7px; }
+        .entry-role { font-size: 11px; }
+        .entry-company { font-size: 10px; margin: 0 0 3px; }
+        .entry-period { font-size: 9.5px; }
+        .bullets { padding-left: 14px; }
+        .bullets li { margin-bottom: 1px; line-height: 1.35; }
+        .tags { font-size: 9px; margin-top: 3px; }
+
+        .skill-row { margin: 2px 0; }
+        .two-col { gap: 1rem; }
+        .mini { margin-bottom: 5px; }
+        .mini-title { font-size: 10.5px; }
+        .mini-sub { font-size: 10px; }
+        .mini-detail { font-size: 9.5px; }
+
+        /* Evitar cortes feos */
+        section, .entry, .two-col, .head { break-inside: avoid; }
+        h2 { break-after: avoid; }
+        a { color: var(--accent); }
+      }
+    </style>
+  </body>
+</html>
