@@ -39,7 +39,7 @@ export const experience: Experience[] = [
   {
     role: 'Desarrollador Freelance · Fundador de CodeNova Studio',
     company: 'CodeNova Studio',
-    period: 'Agosto 2025 — Actualidad',
+    period: 'Enero 2026 — Actualidad',
     current: true,
     highlights: [
       'Fundé CodeNova Studio, un estudio de desarrollo web profesional con IA, y construí más de 100 sitios para restaurantes, hoteles, cafés y clínicas de Boyacá y el eje cafetero.',
@@ -52,7 +52,7 @@ export const experience: Experience[] = [
   {
     role: 'Ingeniero de Desarrollo de Software',
     company: 'Armorum VU-SGDEA',
-    period: 'Noviembre 2024 — Agosto 2025',
+    period: 'Noviembre 2024 — Actualidad',
     highlights: [
       'Desarrollo completo de aplicaciones web y móviles, desde la arquitectura hasta la puesta en producción.',
       'Implementación de soluciones específicas, como app móvil con escáner de documentos e integración con web services.',
